@@ -8,6 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreatePatternSectionDto } from './create-pattern-section.dto';
+import { CreatePatternMaterialDto } from './create-pattern-material.dto';
 
 export class CreatePatternDto {
   @IsString()
@@ -36,4 +37,9 @@ export class CreatePatternDto {
   @ValidateNested({ each: true })
   @Type(() => CreatePatternSectionDto)
   sections: CreatePatternSectionDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreatePatternMaterialDto)
+  materials?: CreatePatternMaterialDto[];
 }
