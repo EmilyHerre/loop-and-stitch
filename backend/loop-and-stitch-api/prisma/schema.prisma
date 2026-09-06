@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Pattern {
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String?
+  category      String
+  difficulty    String
+  estimatedTime Int?
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sections  PatternSection[]
+  materials PatternMaterial[]
+}
+
+model PatternSection {
+  id           Int    @id @default(autoincrement())
+  patternId    Int
+  name         String
+  displayOrder Int
+
+  pattern Pattern        @relation(fields: [patternId], references: [id], onDelete: Cascade)
+  rounds  PatternRound[]
+
+  @@index([patternId])
+}
+
+model PatternRound {
+  id           Int    @id @default(autoincrement())
+  sectionId    Int
+  roundNumber  Int
+  instructions String
+  displayOrder Int
+
+  section PatternSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId])
+}
+
+model Material {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  unit      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patterns PatternMaterial[]
+}
+
+model PatternMaterial {
+  id         Int     @id @default(autoincrement())
+  patternId  Int
+  materialId Int
+  color      String?
+  quantity   Float
+
+  pattern  Pattern  @relation(fields: [patternId], references: [id], onDelete: Cascade)
+  material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+
+  @@unique([patternId, materialId, color])
+  @@index([patternId])
+  @@index([materialId])
+}
